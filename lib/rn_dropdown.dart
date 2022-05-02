@@ -150,32 +150,35 @@ class _RnDropdownState extends State<RnDropdown> {
                         height: widget.dropdownItemList.length <= 5
                             ? widget.buttonHeight! *
                                 widget.dropdownItemList.length
-                            : widget.buttonHeight! * 5,
+                            : widget.buttonHeight! * 5 + 12,
                         child: SizedBox(
                           height: widget.dropdownItemList.length <= 5
                               ? widget.buttonHeight! *
                                   widget.dropdownItemList.length
-                              : widget.buttonHeight! * 5,
-                          child: ListView(
-                            padding: EdgeInsets.zero,
-                            children: widget.dropdownItemList
-                                .map((item) => RnDropdownChild(
-                                      title: item,
-                                      height: widget.buttonHeight!,
-                                      dropdownCallback: (String selectedItem) {
-                                        setState(() {
-                                          _selectedItem = selectedItem;
-                                          if (widget.dropdownCallback != null) {
-                                            widget.dropdownCallback!(
-                                                selectedItem);
-                                          }
-                                          _overlayEntry?.remove();
-                                          _overlayEntry = null;
-                                          isShowing = !isShowing;
-                                        });
-                                      },
-                                    ))
-                                .toList(),
+                              : widget.buttonHeight! * 5 +12,
+                          child: Scrollbar(
+                            thickness: 3,
+                            child: ListView(
+                              padding: EdgeInsets.zero,
+                              children: widget.dropdownItemList
+                                  .map((item) => RnDropdownChild(
+                                        title: item,
+                                        height: widget.buttonHeight!,
+                                        dropdownCallback: (String selectedItem) {
+                                          setState(() {
+                                            _selectedItem = selectedItem;
+                                            if (widget.dropdownCallback != null) {
+                                              widget.dropdownCallback!(
+                                                  selectedItem);
+                                            }
+                                            _overlayEntry?.remove();
+                                            _overlayEntry = null;
+                                            isShowing = !isShowing;
+                                          });
+                                        },
+                                      ))
+                                  .toList(),
+                            ),
                           ),
                         ),
                       ),

@@ -38,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: SafeArea(
         child: RnDropdown(
             dropdownItemList: const ['aaaawfowhaoiefhiowaefhoiwheiof', 'bbb',
-            'ccc', 'ddd'],
+            'ccc', 'ddd', 'eee', 'fff', 'ggg', 'mmm'],
             hintText: '선택하세요'),
       ),
     );
