@@ -9,16 +9,22 @@ class RnDropdown extends StatefulWidget {
       this.buttonHeight = 46.0,
       required this.dropdownItemList,
       required this.hintText,
+      this.hintTextStyle,
+      this.iconColor,
       this.dropdownCallback})
-      : super(key: key);
+      : super(key: key) {
+    iconColor ??= Colors.white;
+    hintTextStyle ??= TextStyle(color: Colors.white, fontSize: 15);
+  }
 
   DropdownCallback? dropdownCallback;
 
   double? buttonWidth;
   double? buttonHeight;
-
+  TextStyle? hintTextStyle;
   final String hintText;
   final List dropdownItemList;
+  Color? iconColor;
 
   @override
   State<RnDropdown> createState() => _RnDropdownState();
@@ -51,6 +57,11 @@ class _RnDropdownState extends State<RnDropdown> {
             CompositedTransformTarget(
               link: _layerLink,
               child: InkWell(
+                focusColor: Colors.transparent,
+                hoverColor: null,
+                overlayColor: null,
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
                   borderRadius: const BorderRadius.all(Radius.circular(16)),
                   onTap: () {
                     setState(() {
@@ -75,25 +86,23 @@ class _RnDropdownState extends State<RnDropdown> {
   AnimatedContainer buildMainButton() {
     return AnimatedContainer(
       padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: const BoxDecoration(
-          // borderRadius: isShowing
-          //     ? const BorderRadius.only(
-          //         topRight: Radius.circular(14), topLeft: Radius.circular(14))
-          //     : const BorderRadius.all(Radius.circular(14)),
-          // border: Border.all(
-          //     width: 1,
-          //     style: BorderStyle.solid,
-          //     color: Colors.grey.withOpacity(0.6)),
-          ),
       width: widget.buttonWidth,
       height: widget.buttonHeight,
       duration: const Duration(milliseconds: 100),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(_selectedItem),
+          Flexible(
+              child: Text(
+            _selectedItem,
+            style: widget.hintTextStyle,
+            overflow: TextOverflow.ellipsis,
+          )),
           AnimatedRotation(
-            child: const Icon(Icons.keyboard_arrow_down),
+            child: Icon(
+              Icons.keyboard_arrow_down,
+              color: widget.iconColor,
+            ),
             duration: const Duration(milliseconds: 140),
             turns: isShowing ? 0.5 : 0,
           ),
@@ -106,7 +115,7 @@ class _RnDropdownState extends State<RnDropdown> {
     return OverlayEntry(builder: (ctx) {
       return Positioned(
         key: scaffoldKey,
-        width: widget.buttonWidth,
+        width: widget.buttonWidth! * 1.3,
         child: CompositedTransformFollower(
             offset: Offset(0, widget.buttonHeight! - 1),
             link: _layerLink,
@@ -123,52 +132,55 @@ class _RnDropdownState extends State<RnDropdown> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                SizedBox(
-                  height: 10,
-                  child: CustomPaint(
-                    painter: TriangleCustomPainter(),
-                  ),
-                ),
-                Positioned(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(16.0),
-                            topRight: Radius.circular(16.0),
-                            bottomLeft: Radius.circular(16.0),
-                            bottomRight: Radius.circular(16.0))),
-                    height: widget.dropdownItemList.length <= 5
-                        ? widget.buttonHeight! *
-                            widget.dropdownItemList.length
-                        : widget.buttonHeight! * 5,
-                    child: SizedBox(
-                      height: widget.dropdownItemList.length <= 5
-                          ? widget.buttonHeight! *
-                              widget.dropdownItemList.length
-                          : widget.buttonHeight! * 5,
-                      child: ListView(
-                        padding: EdgeInsets.zero,
-                        children: widget.dropdownItemList
-                            .map((item) => RnDropdownChild(
-                                  title: item,
-                                  height: widget.buttonHeight!,
-                                  dropdownCallback: (String selectedItem) {
-                                    setState(() {
-                                      _selectedItem = selectedItem;
-                                      if (widget.dropdownCallback != null) {
-                                        widget
-                                            .dropdownCallback!(selectedItem);
-                                      }
-                                    });
-                                  },
-                                ))
-                            .toList(),
+                    SizedBox(
+                      height: 10,
+                      child: CustomPaint(
+                        painter: TriangleCustomPainter(),
                       ),
                     ),
-                  ),
-                ),
-              ]),
+                    Positioned(
+                      child: Container(
+                        decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(16.0),
+                                topRight: Radius.circular(16.0),
+                                bottomLeft: Radius.circular(16.0),
+                                bottomRight: Radius.circular(16.0))),
+                        height: widget.dropdownItemList.length <= 5
+                            ? widget.buttonHeight! *
+                                widget.dropdownItemList.length
+                            : widget.buttonHeight! * 5,
+                        child: SizedBox(
+                          height: widget.dropdownItemList.length <= 5
+                              ? widget.buttonHeight! *
+                                  widget.dropdownItemList.length
+                              : widget.buttonHeight! * 5,
+                          child: ListView(
+                            padding: EdgeInsets.zero,
+                            children: widget.dropdownItemList
+                                .map((item) => RnDropdownChild(
+                                      title: item,
+                                      height: widget.buttonHeight!,
+                                      dropdownCallback: (String selectedItem) {
+                                        setState(() {
+                                          _selectedItem = selectedItem;
+                                          if (widget.dropdownCallback != null) {
+                                            widget.dropdownCallback!(
+                                                selectedItem);
+                                          }
+                                          _overlayEntry?.remove();
+                                          _overlayEntry = null;
+                                          isShowing = !isShowing;
+                                        });
+                                      },
+                                    ))
+                                .toList(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ]),
             )),
       );
     });

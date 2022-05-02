@@ -37,7 +37,8 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: Colors.blue,
       body: SafeArea(
         child: RnDropdown(
-            dropdownItemList: const ['aaa', 'bbb', 'ccc', 'ddd'],
+            dropdownItemList: const ['aaaawfowhaoiefhiowaefhoiwheiof', 'bbb',
+            'ccc', 'ddd'],
             hintText: '선택하세요'),
       ),
     );
